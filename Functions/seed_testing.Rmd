@@ -1,0 +1,223 @@
+---
+title: "testing_seed"
+author: "Paulina von Stackelberg"
+date: "25 4 2021"
+output: html_document
+---
+
+In this doc you can find some seed-testing.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+run sim with 3 iterations twice and see if matrices are the same
+
+```{r}
+
+set.seed(2224)
+clusterSetRNGStream(cl =clust, iseed = 2224)
+test1<- sim(k_def = 3, data_spec = data_spec_3, nsub = 200, nsim = 3, n_param = 10, mis_prop = 0.25, mis_mech = "MAR", mis_pattern = mis_pattern, model = 2)
+
+
+set.seed(2224)
+clusterSetRNGStream(cl =clust, iseed = 2224)
+test2 <- sim(k_def = 3, data_spec = data_spec_3, nsub = 200, nsim = 3, n_param = 10, mis_prop = 0.25, mis_mech = "MAR", mis_pattern = mis_pattern, model = 2)
+
+```
+
+```{r}
+
+# for the first iteration
+
+test1[["Results_cond1"]][[1]][["results_test"]] == test2[["Results_cond1"]][[1]][["results_test"]]
+test1[["Results_cond2"]][[1]][["results_test"]][[1]] == test2[["Results_cond2"]][[1]][["results_test"]][[1]]
+test1[["Results_cond3"]][[1]][["results_test"]][[1]] == test2[["Results_cond3"]][[1]][["results_test"]][[1]]
+test1[["Results_cond4"]][[1]][["results_test"]][[1]] == test2[["Results_cond4"]][[1]][["results_test"]][[1]]
+
+
+# for the third iteration
+
+test1[["Results_cond1"]][[3]][["results_test"]] == test2[["Results_cond1"]][[3]][["results_test"]]
+test1[["Results_cond2"]][[3]][["results_test"]][[1]] == test2[["Results_cond2"]][[3]][["results_test"]][[1]]
+test1[["Results_cond3"]][[3]][["results_test"]][[1]] == test2[["Results_cond3"]][[3]][["results_test"]][[1]]
+test1[["Results_cond4"]][[3]][["results_test"]][[1]] == test2[["Results_cond4"]][[3]][["results_test"]][[1]]
+
+
+test1[["Results_cond1"]][[3]][["results_test"]] == test2[["Results_cond1"]][[3]][["results_test"]]
+test1[["Results_cond2"]][[3]][["results_test"]][[3]] == test2[["Results_cond2"]][[3]][["results_test"]][[3]]
+test1[["Results_cond3"]][[3]][["results_test"]][[3]] == test2[["Results_cond3"]][[3]][["results_test"]][[3]]
+test1[["Results_cond4"]][[3]][["results_test"]][[3]] == test2[["Results_cond4"]][[3]][["results_test"]][[3]]
+
+```
+
+This method nicely recovers the same values. Everything is TRUE, so it's exactly the same, and there doesn't seem to be a slip.
+
+
+
+
+
+
+Now checking if this seed setting just replicates the same stuff per core. I assume that in parallelization each core takes on a different element of the list? So that 'apply' is not executed sequentially, but at several points.
+
+```{r}
+### for condition 3
+
+# fold nr 2
+
+test1[["Results_cond3"]][[1]][["results_test"]][[2]] == test1[["Results_cond3"]][[2]][["results_test"]][[2]] # comparing iteration 1 and 2
+test1[["Results_cond3"]][[3]][["results_test"]][[2]] == test1[["Results_cond3"]][[1]][["results_test"]][[2]] # comparing iteration 1 and 3
+
+# note that sens and spec selection are always TRUE because this is ridge, so I don't calculate them.
+
+# fold nr 1
+
+test1[["Results_cond3"]][[1]][["results_test"]][[1]] == test1[["Results_cond3"]][[2]][["results_test"]][[1]] # comparing iteration 1 and 2
+test1[["Results_cond3"]][[3]][["results_test"]][[1]] == test1[["Results_cond3"]][[1]][["results_test"]][[1]] # comparing iteration 1 and 3
+
+
+# fold nr 3
+
+test1[["Results_cond3"]][[1]][["results_test"]][[3]] == test1[["Results_cond3"]][[2]][["results_test"]][[3]] # comparing iteration 1 and 2
+test1[["Results_cond3"]][[3]][["results_test"]][[3]] == test1[["Results_cond3"]][[1]][["results_test"]][[3]] # comparing iteration 1 and 3
+
+
+
+### for condition 1
+
+
+# fold nr 2
+
+test1[["Results_cond1"]][[1]][["results_test"]] == test1[["Results_cond1"]][[2]][["results_test"]] # comparing iteration 1 and 2
+test1[["Results_cond1"]][[3]][["results_test"]] == test1[["Results_cond1"]][[1]][["results_test"]] # comparing iteration 1 and 3
+
+# note that sens and spec selection are always TRUE because this is ridge, so I don't calculate them.
+
+# fold nr 1
+
+test1[["Results_cond1"]][[1]][["results_test"]] == test1[["Results_cond1"]][[2]][["results_test"]] # comparing iteration 1 and 2
+test1[["Results_cond1"]][[3]][["results_test"]] == test1[["Results_cond1"]][[1]][["results_test"]] # comparing iteration 1 and 3
+
+
+# fold nr 3
+
+test1[["Results_cond1"]][[1]][["results_test"]] == test1[["Results_cond1"]][[2]][["results_test"]] # comparing iteration 1 and 2
+test1[["Results_cond1"]][[3]][["results_test"]] == test1[["Results_cond1"]][[1]][["results_test"]] # comparing iteration 1 and 3
+
+
+
+### for complete data condition
+
+# fold nr 2
+
+test1[["results_comp"]][[1]][["results_test"]] == test1[["results_comp"]][[2]][["results_test"]] # comparing iteration 1 and 2
+test1[["results_comp"]][[3]][["results_test"]] == test1[["results_comp"]][[1]][["results_test"]] # comparing iteration 1 and 3
+
+# note that sens and spec selection are always TRUE because this is ridge, so I don't calculate them.
+
+# fold nr 1
+
+test1[["results_comp"]][[1]][["results_test"]] == test1[["results_comp"]][[2]][["results_test"]]# comparing iteration 1 and 2
+test1[["results_comp"]][[3]][["results_test"]] == test1[["results_comp"]][[1]][["results_test"]] # comparing iteration 1 and 3
+
+
+# fold nr 3
+
+test1[["results_comp"]][[1]][["results_test"]] == test1[["results_comp"]][[2]][["results_test"]]# comparing iteration 1 and 2
+test1[["results_comp"]][[3]][["results_test"]]== test1[["results_comp"]][[1]][["results_test"]] # comparing iteration 1 and 3
+
+
+
+
+### just to be sure, I'm also doing a visual inspection of single matrices to see if there's a pattern that's unexpected
+
+test1[["Results_cond3"]][[1]][["results_test"]][[2]] 
+test1[["Results_cond3"]][[1]][["results_test"]][[1]] 
+test1[["Results_cond4"]][[1]][["results_test"]][[3]] 
+
+# something weird for third matrix (WHEN MCAR IS USED -> RIGHT NOW ITS MAR!!): e.g. line 2 and 14 for the AUC + sens/spec match, but not line 2 and 14 for Brier, calibration intercept, calibration slope, R2...so just a conincidence?
+```
+
+
+
+Now see if this works with global seed.
+
+```{r}
+set.seed(2224)
+
+test3 <- sim(k_def = 3, data_spec = data_spec_3, nsub = 200, nsim = 3, n_param = 10, mis_prop = 0.25, mis_mech = "MAR", mis_pattern = mis_pattern, model = 2)
+
+
+set.seed(2224)
+
+test4<- sim(k_def = 3, data_spec = data_spec_3, nsub = 200, nsim =3, n_param = 10, mis_prop = 0.25, mis_mech = "MAR", mis_pattern = mis_pattern, model = 2)
+
+```
+
+```{r}
+
+# for the first iteration
+
+test3[["Results_cond1"]][[1]][["results_test"]] == test4[["Results_cond1"]][[1]][["results_test"]]
+test3[["Results_cond2"]][[1]][["results_test"]][[1]] == test4[["Results_cond2"]][[1]][["results_test"]][[1]]
+test3[["Results_cond3"]][[1]][["results_test"]][[1]] == test4[["Results_cond3"]][[1]][["results_test"]][[1]]
+test3[["Results_cond4"]][[1]][["results_test"]][[1]] == test4[["Results_cond4"]][[1]][["results_test"]][[1]]
+
+
+# for the third iteration
+
+test3[["Results_cond1"]][[3]][["results_test"]] == test4[["Results_cond1"]][[3]][["results_test"]]
+test3[["Results_cond2"]][[3]][["results_test"]][[1]] == test4[["Results_cond2"]][[3]][["results_test"]][[1]]
+test3[["Results_cond3"]][[3]][["results_test"]][[1]] == test4[["Results_cond3"]][[3]][["results_test"]][[1]]
+test3[["Results_cond4"]][[3]][["results_test"]][[1]] == test4[["Results_cond4"]][[3]][["results_test"]][[1]]
+
+
+test3[["Results_cond1"]][[3]][["results_test"]] == test4[["Results_cond1"]][[3]][["results_test"]]
+test3[["Results_cond2"]][[3]][["results_test"]][[3]] == test4[["Results_cond2"]][[3]][["results_test"]][[3]]
+test3[["Results_cond3"]][[3]][["results_test"]][[3]] == test4[["Results_cond3"]][[3]][["results_test"]][[3]]
+test3[["Results_cond4"]][[3]][["results_test"]][[3]] == test4[["Results_cond4"]][[3]][["results_test"]][[3]]
+```
+
+Here you can see that in very few cases, test3 and test4 are identical. However, I don't see anything like a periodic pattern (e.g., every 5th estimate being the same). So it might be that the seed does something, but it sure isn't what I want. Also, if it did work, I should see TRUE for each estimate (AUC, Brier, etc) of that line?
+
+
+
+Now check something - if no value is supplied to iseed, I'd expect the global random seed in the beginning to work.https://r.789695.n4.nabble.com/Parallel-number-stream-clusterSetRNGStream-td4757483.html
+
+```{r}
+
+set.seed(2224)
+clusterSetRNGStream(cl =clust)
+test5 <- sim(k_def = 3, data_spec = data_spec_3, nsub = 200, nsim = 3, n_param = 10, mis_prop = 0.25, mis_mech = "MCAR", mis_pattern = mis_pattern, model = 2)
+
+
+set.seed(2224)
+clusterSetRNGStream(cl =clust)
+test6<- sim(k_def = 3, data_spec = data_spec_3, nsub = 200, nsim =3, n_param = 10, mis_prop = 0.25, mis_mech = "MCAR", mis_pattern = mis_pattern, model = 2)
+
+```
+
+
+```{r}
+# for the first iteration
+
+test5[["Results_cond1"]][[1]][["results_test"]] == test6[["Results_cond1"]][[1]][["results_test"]]
+test5[["Results_cond2"]][[1]][["results_test"]][[1]] == test6[["Results_cond2"]][[1]][["results_test"]][[1]]
+test5[["Results_cond3"]][[1]][["results_test"]][[1]] == test6[["Results_cond3"]][[1]][["results_test"]][[1]]
+test5[["Results_cond4"]][[1]][["results_test"]][[1]] == test6[["Results_cond4"]][[1]][["results_test"]][[1]]
+
+
+# for the third iteration
+
+test5[["Results_cond1"]][[3]][["results_test"]] == test6[["Results_cond1"]][[3]][["results_test"]]
+test5[["Results_cond2"]][[3]][["results_test"]][[1]] == test6[["Results_cond2"]][[3]][["results_test"]][[1]]
+test5[["Results_cond3"]][[3]][["results_test"]][[1]] == test6[["Results_cond3"]][[3]][["results_test"]][[1]]
+test5[["Results_cond4"]][[3]][["results_test"]][[1]] == test6[["Results_cond4"]][[3]][["results_test"]][[1]]
+
+test5[["Results_cond1"]][[3]][["results_test"]] == test6[["Results_cond1"]][[3]][["results_test"]]
+test5[["Results_cond2"]][[3]][["results_test"]][[3]] == test6[["Results_cond2"]][[3]][["results_test"]][[3]]
+test5[["Results_cond3"]][[3]][["results_test"]][[3]] == test6[["Results_cond3"]][[3]][["results_test"]][[3]]
+test5[["Results_cond4"]][[3]][["results_test"]][[3]] == test6[["Results_cond4"]][[3]][["results_test"]][[3]]
+```
+
+As expected.
