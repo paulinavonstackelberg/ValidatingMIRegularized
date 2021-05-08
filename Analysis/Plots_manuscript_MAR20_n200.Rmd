@@ -1,0 +1,431 @@
+---
+title: "Plots supplementary MAR 20 n200"
+author: "Paulina von Stackelberg"
+date: "28 4 2021"
+output: html_document
+---
+In this document, you can find plots generated for n=200, MAR, 20 covariates.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r,warning=FALSE,message=FALSE}
+library(tidyverse)
+library(facetscales)
+
+#important: install this extension for the plots
+#install.packages("remotes")
+#remotes::install_github("zeehio/facetscales")
+```
+
+Choose the files; other files (and therefore other conditions) may be chosen here. The results called in this section correspond to those discussed in the main body of the manuscript.
+
+```{r files}
+
+MAR_1_lasso20 <- readRDS("MAR_1_lasso")
+MAR_3_lasso20 <- readRDS("MAR_3_lasso")
+MAR_5_lasso20 <- readRDS("MAR_5_lasso")
+MAR_7_lasso20 <- readRDS("MAR_7_lasso")
+
+MAR_1_ridge20 <- readRDS("MAR_1_ridge")
+MAR_3_ridge20 <- readRDS("MAR_3_ridge")
+MAR_5_ridge20 <- readRDS("MAR_5_ridge")
+MAR_7_ridge20 <- readRDS("MAR_7_ridge")
+
+```
+
+
+```{r}
+
+cond1_MAR1_lasso <- MAR_1_lasso20[["Results_cond1"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.data.frame(.,) %>%
+  mutate(condition= 'MI-bef(y)')
+
+cond2_MAR1_lasso <- MAR_1_lasso20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.data.frame(.,)%>%
+  mutate(condition = 'MI-bef(-y)')
+
+cond3_MAR1_lasso <- MAR_1_lasso20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVreuse')
+
+cond4_MAR1_lasso <- MAR_1_lasso20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVsep')
+
+complete_MAR1_lasso <- MAR_1_lasso20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'no missingness')
+
+merged_data_1 <- rbind(cond1_MAR1_lasso, cond2_MAR1_lasso, cond3_MAR1_lasso, cond4_MAR1_lasso, complete_MAR1_lasso)
+
+
+cond1_MAR3_lasso <- MAR_3_lasso20[["Results_cond1"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.data.frame(.,) %>%
+  mutate(condition = 'MI-bef(y)')
+
+cond2_MAR3_lasso <- MAR_3_lasso20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.data.frame(.,)%>%
+  mutate(condition = 'MI-bef(-y)')
+
+cond3_MAR3_lasso <- MAR_3_lasso20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition= 'MI-CVreuse')
+
+cond4_MAR3_lasso <- MAR_3_lasso20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVsep')
+
+complete_MAR3_lasso <- MAR_3_lasso20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'no missingness')
+
+merged_data_3 <- rbind(cond1_MAR3_lasso, cond2_MAR3_lasso, cond3_MAR3_lasso, cond4_MAR3_lasso, complete_MAR3_lasso)
+
+
+# merge merged_data_1 and merged_data_3
+
+merged_data_1 <- merged_data_1 %>% mutate(mis_prop = 0.25)
+merged_data_3 <- merged_data_3 %>% mutate(mis_prop = 0.75)
+merged_data_13_lasso<- rbind(merged_data_1, merged_data_3)%>% mutate(model = "LASSO")
+
+
+
+```
+
+
+```{r}
+
+cond1_MAR5_lasso <- MAR_5_lasso20[["Results_cond1"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.data.frame(.,) %>%
+  mutate(condition= 'MI-bef(y)')
+
+cond2_MAR5_lasso <- MAR_5_lasso20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.data.frame(.,)%>%
+  mutate(condition = 'MI-bef(-y)')
+
+cond3_MAR5_lasso <- MAR_5_lasso20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVreuse')
+
+cond4_MAR5_lasso <- MAR_5_lasso20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVsep')
+
+complete_MAR5_lasso <- MAR_5_lasso20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'no missingness')
+
+merged_data_5<- rbind(cond1_MAR5_lasso, cond2_MAR5_lasso, cond3_MAR5_lasso, cond4_MAR5_lasso, complete_MAR5_lasso)
+
+
+
+cond1_MAR7_lasso <- MAR_7_lasso20[["Results_cond1"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.data.frame(.,) %>%
+  mutate(condition = 'MI-bef(y)')
+
+cond2_MAR7_lasso <- MAR_7_lasso20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.data.frame(.,)%>%
+  mutate(condition = 'MI-bef(-y)')
+
+cond3_MAR7_lasso <- MAR_7_lasso20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition= 'MI-CVreuse')
+
+cond4_MAR7_lasso <- MAR_7_lasso20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVsep')
+
+complete_MAR7_lasso <- MAR_7_lasso20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'no missingness')
+
+merged_data_7 <- rbind(cond1_MAR7_lasso, cond2_MAR7_lasso, cond3_MAR7_lasso, cond4_MAR7_lasso, complete_MAR7_lasso)
+
+
+# merge merged_data_5 and merged_data_7
+
+merged_data_5 <- merged_data_5 %>% mutate(mis_prop = 0.25)
+merged_data_7 <- merged_data_7 %>% mutate(mis_prop = 0.75)
+merged_data_57_lasso<- rbind(merged_data_5, merged_data_7)%>% mutate(model = "LASSO")
+
+```
+
+
+
+```{r}
+
+
+cond1_MAR1_ridge <- MAR_1_ridge20[["Results_cond1"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.data.frame(.,) %>%
+  mutate(condition= 'MI-bef(y)')
+
+cond2_MAR1_ridge <- MAR_1_ridge20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.data.frame(.,)%>%
+  mutate(condition = 'MI-bef(-y)')
+
+cond3_MAR1_ridge <- MAR_1_ridge20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVreuse')
+
+cond4_MAR1_ridge <- MAR_1_ridge20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVsep')
+
+complete_MAR1_ridge <- MAR_1_ridge20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'no missingness')
+
+merged_data_1 <- rbind(cond1_MAR1_ridge, cond2_MAR1_ridge, cond3_MAR1_ridge, cond4_MAR1_ridge, complete_MAR1_ridge)
+
+
+
+cond1_MAR3_ridge <- MAR_3_ridge20[["Results_cond1"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.data.frame(.,) %>%
+  mutate(condition = 'MI-bef(y)')
+
+cond2_MAR3_ridge <- MAR_3_ridge20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.data.frame(.,)%>%
+  mutate(condition = 'MI-bef(-y)')
+
+cond3_MAR3_ridge <- MAR_3_ridge20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition= 'MI-CVreuse')
+
+cond4_MAR3_ridge <- MAR_3_ridge20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVsep')
+
+complete_MAR3_ridge <- MAR_3_ridge20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'no missingness')
+
+merged_data_3 <- rbind(cond1_MAR3_ridge, cond2_MAR3_ridge, cond3_MAR3_ridge, cond4_MAR3_ridge, complete_MAR3_ridge)
+
+
+# merge merged_data_1 and merged_data_3
+
+merged_data_1 <- merged_data_1 %>% mutate(mis_prop = 0.25)
+merged_data_3 <- merged_data_3 %>% mutate(mis_prop = 0.75)
+merged_data_13_ridge<- rbind(merged_data_1, merged_data_3)%>% mutate(model = "Ridge")
+
+
+
+```
+
+
+```{r}
+
+
+cond1_MAR5_ridge <- MAR_5_ridge20[["Results_cond1"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.data.frame(.,) %>%
+  mutate(condition= 'MI-bef(y)')
+
+cond2_MAR5_ridge <- MAR_5_ridge20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.data.frame(.,)%>%
+  mutate(condition = 'MI-bef(-y)')
+
+cond3_MAR5_ridge <- MAR_5_ridge20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVreuse')
+
+cond4_MAR5_ridge <- MAR_5_ridge20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVsep')
+
+complete_MAR5_ridge <- MAR_5_ridge20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'no missingness')
+
+merged_data_5<- rbind(cond1_MAR5_ridge, cond2_MAR5_ridge, cond3_MAR5_ridge, cond4_MAR5_ridge, complete_MAR5_ridge)
+
+
+cond1_MAR7_ridge <- MAR_7_ridge20[["Results_cond1"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.data.frame(.,) %>%
+  mutate(condition = 'MI-bef(y)')
+
+cond2_MAR7_ridge <- MAR_7_ridge20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.data.frame(.,)%>%
+  mutate(condition = 'MI-bef(-y)')
+
+cond3_MAR7_ridge <- MAR_7_ridge20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition= 'MI-CVreuse')
+
+cond4_MAR7_ridge <- MAR_7_ridge20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVsep')
+
+complete_MAR7_ridge <- MAR_7_ridge20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'no missingness')
+
+merged_data_7 <- rbind(cond1_MAR7_ridge, cond2_MAR7_ridge, cond3_MAR7_ridge, cond4_MAR7_ridge, complete_MAR7_ridge)
+
+
+# merge merged_data_5 and merged_data_7
+
+merged_data_5 <- merged_data_5 %>% mutate(mis_prop = 0.25)
+merged_data_7 <- merged_data_7 %>% mutate(mis_prop = 0.75)
+merged_data_57_ridge<- rbind(merged_data_5, merged_data_7)%>% mutate(model = "Ridge")
+
+```
+
+## LASSO and Ridge, cor 0
+
+```{r}
+
+merged_data_13_ridgeLasso <- rbind(merged_data_13_ridge, merged_data_13_lasso)
+
+AUCBrier_13_ridgeLasso <- merged_data_13_ridgeLasso %>% 
+  as.data.frame(.)%>%
+  rename("Brier" = brier, "sensitivity" = sens, "specificity" = spec) %>%
+  select(c("AUC", "Brier","sensitivity", "specificity",condition,mis_prop ,model)) %>%
+  gather(., evaluation_measure, value, "AUC":"specificity") %>%
+  mutate(condition = fct_relevel(condition, "no missingness", "MI-bef(y)", "MI-bef(-y)", "MI-CVsep", "MI-CVreuse")) %>%
+  ggplot( aes(x=as.factor(mis_prop),value, fill = condition))  +
+  geom_boxplot()+ xlab("Missingness proportion") + ylab("estimand value")+ scale_fill_manual(values=c("grey69", "cadetblue3" ,"darkseagreen", "chocolate", "hotpink3"), name = "MI/CV combination")+ theme_bw() + 
+  facet_grid(evaluation_measure ~ model,  scales="free_y")+ theme(legend.position="bottom")+ theme(text=element_text(size=13))
+
+AUCBrier_13_ridgeLasso
+
+
+```
+
+## LASSO and Ridge, cor 0.3
+```{r}
+merged_data_57_ridgeLasso <- rbind(merged_data_57_ridge, merged_data_57_lasso)
+
+AUCBrier_57_ridgeLasso <- merged_data_57_ridgeLasso %>% 
+  as.data.frame(.)%>%
+  rename("Brier" = brier, "sensitivity" = sens, "specificity" = spec) %>%
+  select(c("AUC", "Brier","sensitivity", "specificity",condition,mis_prop ,model)) %>%
+  gather(., evaluation_measure, value, "AUC":"specificity") %>%
+  mutate(condition = fct_relevel(condition, "no missingness", "MI-bef(y)", "MI-bef(-y)", "MI-CVsep", "MI-CVreuse")) %>%
+  ggplot( aes(x=as.factor(mis_prop),value, fill = condition))  +
+  geom_boxplot()+ xlab("Missingness proportion") + ylab("estimand value")+ scale_fill_manual(values=c("grey69", "cadetblue3" ,"darkseagreen", "chocolate", "hotpink3"), name = "MI/CV combination")+ theme_bw() + 
+  facet_grid(evaluation_measure ~ model,  scales="free_y")+ theme(legend.position="bottom")+ theme(text=element_text(size=13))
+
+AUCBrier_57_ridgeLasso
+
+```
+
+
+
+## 2. Plots for the calibration slope and intercept
+
+## LASSO and Ridge, cor 0.3
+
+
+
+```{r}
+merged_data_57_ridgeLasso <- rbind(merged_data_57_ridge, merged_data_57_lasso)
+
+scales_y <- list(
+  "calibration intercept" = scale_y_continuous(limits = c(-0.2,0.4)),
+  "calibration slope" = scale_y_continuous(limits = c(0, 4))
+)
+
+Cal_57_ridgeLasso <- merged_data_57_ridgeLasso %>%as.data.frame(.)   %>%rename("calibration intercept" = cal_b0,"calibration slope"= cal_b1) %>%select(c("calibration intercept", "calibration slope",condition,mis_prop ,model)) %>%gather(., evaluation_measure, value, "calibration intercept":"calibration slope") %>%mutate(condition = fct_relevel(condition, "no missingness", "MI-bef(y)", "MI-bef(-y)", "MI-CVsep", "MI-CVreuse")) %>%ggplot( aes(x=as.factor(mis_prop),value, fill = condition))  +
+  geom_boxplot()+ xlab("Missingness proportion") + ylab("estimand value")+ scale_fill_manual(values=c("grey69", "cadetblue3" ,"darkseagreen", "chocolate", "hotpink3"), name = "MI/CV combination")+ theme_bw() + 
+  facet_grid_sc(rows = evaluation_measure ~ model, scales = list(y = scales_y))+ theme(legend.position="bottom")+ theme(text=element_text(size=13))
+
+Cal_57_ridgeLasso
+
+
+```
+
+## LASSO and Ridge, cor 0
+
+```{r}
+merged_data_13_ridgeLasso <- rbind(merged_data_13_ridge, merged_data_13_lasso)
+
+scales_y <- list(
+  "calibration intercept" = scale_y_continuous(limits = c(-0.2,0.4)),
+  "calibration slope" = scale_y_continuous(limits = c(0, 4))
+)
+
+Cal_13_ridgeLasso <- merged_data_13_ridgeLasso %>%as.data.frame(.)   %>%
+  rename("calibration intercept" = cal_b0,"calibration slope"= cal_b1) %>%select(c("calibration intercept", "calibration slope",condition,mis_prop ,model)) %>%
+  gather(., evaluation_measure, value, "calibration intercept":"calibration slope") %>%
+  mutate(condition = fct_relevel(condition, "no missingness", "MI-bef(y)", "MI-bef(-y)", "MI-CVsep", "MI-CVreuse")) %>%
+  ggplot( aes(x=as.factor(mis_prop),value, fill = condition))  +
+  geom_boxplot()+ xlab("Missingness proportion") + ylab("estimand value")+ scale_fill_manual(values=c("grey69", "cadetblue3",
+  "darkseagreen", "chocolate", "hotpink3"), name = "MI/CV combination")+ theme_bw() + 
+  facet_grid_sc(rows = evaluation_measure ~ model, scales = list(y = scales_y))+ theme(legend.position="bottom")+ theme(text=element_text(size=13))
+
+Cal_13_ridgeLasso
+
+```
+
+
+
+
+
+## 3. Plots for sens/spec of selection
+
+## LASSO, cor 0.3
+
+```{r}
+
+
+sens_selec_57_Lasso <-merged_data_57_lasso %>%
+  mutate(condition = fct_relevel(condition, "no missingness", "MI-bef(y)", "MI-bef(-y)", "MI-CVsep", "MI-CVreuse")) %>%
+  ggplot( aes(x=as.factor(mis_prop), y=sens_selection, fill = condition))+
+  geom_boxplot()+ xlab("Missingness proportion") + ylab("sensitivity of selection")+
+  facet_wrap(~ model)+ theme(legend.position="bottom")+ scale_fill_manual(values=c("grey69", "cadetblue3" ,"darkseagreen", "chocolate", "hotpink3"), name = "MI/CV combination")+ theme_bw()
+
+
+spec_selec_57_Lasso <- merged_data_57_lasso %>%
+  mutate(condition = fct_relevel(condition, "no missingness", "MI-bef(y)", "MI-bef(-y)", "MI-CVsep", "MI-CVreuse")) %>%
+  ggplot( aes(x=as.factor(mis_prop), y=spec_selection, fill = condition)) +
+  geom_boxplot()+ xlab("Missingness proportion") + ylab("specificity of selection")+
+  facet_wrap(~ model)+ theme(legend.position="bottom")+ scale_fill_manual(values=c("grey69", "cadetblue3" ,"darkseagreen",
+  "chocolate", "hotpink3"), name = "MI/CV combination")+ theme_bw()
+
+sens_spec_selection_57 <- ggpubr::ggarrange(sens_selec_57_Lasso, spec_selec_57_Lasso, ncol=2, common.legend = TRUE, legend="bottom")
+
+
+ggpubr:: ggpar(sens_spec_selection_57 ,
+               font.main = c(13, "black"),
+               font.x = c(13, "bold", "#2E9FDF"),
+               font.y = c(13, "bold", "#E7B800"))
+
+
+
+```
+
+
+## LASSO, cor 0
+
+```{r}
+
+
+sens_selec_13_Lasso <- merged_data_13_lasso %>%
+  mutate(condition = fct_relevel(condition, "no missingness", "MI-bef(y)", "MI-bef(-y)", "MI-CVsep", "MI-CVreuse")) %>%
+  ggplot( aes(x=as.factor(mis_prop), y=sens_selection, fill = condition)) +
+  geom_boxplot()+ xlab("Missingness proportion") + ylab("sensitivity of selection")+
+  facet_wrap(~ model)+ theme(legend.position="bottom")+ scale_fill_manual(values=c("grey69", "cadetblue3" ,"darkseagreen", "chocolate", "hotpink3"), name = "MI/CV combination")+ theme_bw()
+
+
+spec_selec_13_Lasso <-merged_data_13_lasso %>%
+  mutate(condition = fct_relevel(condition, "no missingness", "MI-bef(y)", "MI-bef(-y)", "MI-CVsep", "MI-CVreuse")) %>%
+  ggplot( aes(x=as.factor(mis_prop), y=spec_selection, fill = condition)) +
+  geom_boxplot()+ xlab("Missingness proportion") + ylab("specificity of selection")+
+  facet_wrap(~ model)+ theme(legend.position="bottom")+ 
+  scale_fill_manual(values=c("grey69", "cadetblue3" ,"darkseagreen",   "chocolate", "hotpink3"), name = "MI/CV combination")+
+  theme_bw()
+
+spec_selec_13_Lasso
+
+sens_spec_selection_13 <- ggpubr::ggarrange(sens_selec_13_Lasso, spec_selec_13_Lasso, ncol=2, common.legend = TRUE, legend="bottom")
+
+ggpubr:: ggpar(sens_spec_selection_13 ,
+               font.main = c(13, "black"),
+               font.x = c(13, "bold", "#2E9FDF"),
+               font.y = c(13, "bold", "#E7B800"))
+
+```
+
+
+## 4. Plots for Cox-Snell
+
+## LASSO and Ridge, cor 0.3
+
+```{r}
+
+merged_data_57_ridgeLasso <- rbind(merged_data_57_ridge, merged_data_57_lasso)
+
+CS_57_ridgeLasso <- merged_data_57_ridgeLasso %>%
+  mutate(condition = fct_relevel(condition, "no missingness", "MI-bef(y)", "MI-bef(-y)", "MI-CVsep", "MI-CVreuse")) %>%
+  ggplot( aes(x=as.factor(mis_prop), y=CoxSnell, fill = condition)) +
+  geom_boxplot()+ xlab("Missingness proportion") + ylab(expression(paste("Cox-Snell ", R^2)))+
+  facet_wrap(~ model)+ theme(axis.title.x = element_blank())+
+  ylim(-1,0.5)+ scale_fill_manual(values=c("grey69", "cadetblue3" ,"darkseagreen", "chocolate", "hotpink3"), name = "MI/CV
+  combination")+ theme_bw()+ theme(legend.position="bottom")+ theme(text=element_text(size=13))
+
+CS_57_ridgeLasso
+
+```
+
+
+
+## LASSO and Ridge, cor 0
+
+```{r}
+
+merged_data_13_ridgeLasso <- rbind(merged_data_13_ridge, merged_data_13_lasso)
+
+CS_13_ridgeLasso <- merged_data_13_ridgeLasso %>%
+  mutate(condition = fct_relevel(condition, "no missingness", "MI-bef(y)", "MI-bef(-y)", "MI-CVsep", "MI-CVreuse")) %>%
+  ggplot( aes(x=as.factor(mis_prop), y=CoxSnell, fill = condition)) +
+  geom_boxplot()+ xlab("Missingness proportion") + ylab(expression(paste("Cox-Snell ", R^2)))+
+  facet_wrap(~ model)+ theme(axis.title.x = element_blank())+
+  ylim(-1,0.5)+ scale_fill_manual(values=c("grey69", "cadetblue3" ,"darkseagreen", "chocolate", "hotpink3"), 
+  name = "MI/CV combination")+ theme_bw()+ theme(legend.position="bottom")+ theme(text=element_text(size=13))
+
+CS_13_ridgeLasso
+
+```
