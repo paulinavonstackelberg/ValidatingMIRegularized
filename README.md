@@ -1,6 +1,6 @@
 # How to validate regularized regression models on incomplete data
 
-This repository contains all files needed to replicate the results obtained in the simulation study conducted for the paper "How to validate regularized regression models on incomplete data". 
+This repository contains all files needed to replicate the results obtained in the simulation study reported in the paper "How to validate regularized regression models on incomplete data". 
 
 ## Abstract
 
