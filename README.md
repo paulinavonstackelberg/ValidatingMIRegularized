@@ -14,4 +14,4 @@ This repository is split into several folders.
 - `Documents`: contains the manuscript file, as well as the ethical review document.
 - `Functions_simulation`: contains all functions needed to replicate this study.
 - `Analysis`: contains the script needed to generate the tables.
-- `Supplementary_mat`: contains the supplementary plots mentioned in the manuscript.
+- `Supplementary_figures`: contains the supplementary figures of the remaining conditions, as mentioned in the manuscript.
