@@ -11,6 +11,6 @@ When building prediction models using real-world data, two procedures often need
 
 This repository is split into several folders. 
 
-- `Manuscript`: contains the manuscript file, as well as the ethical review document.
+- `Documents`: contains the manuscript file, as well as the ethical review document.
 - `Functions`: contains all functions needed to replicate this study.
-- `Supplementary_mat`: contains some supplementary files with additional plots.
+- `Supplementary_mat`: contains the supplementary plots mentioned in the manuscript.
