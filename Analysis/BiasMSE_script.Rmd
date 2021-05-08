@@ -1,0 +1,392 @@
+---
+title: "Mean, bias, and MSE tables"
+author: "Paulina von Stackelberg"
+date: "2 5 2021"
+output: html_document
+---
+
+In this document, you can find the script used to calculate the bias, MSE, and means.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages}
+
+library(tidyverse)
+library(xtable)
+
+```
+
+
+Load the datasets you want to analyze - for ridge regression, lasso regression, and the two missingness proportions (0.25, 0.75).
+Below I load the datasets that allow you to reproduce the tables found in the thesis, but these can be replaced by the other conditions. In the manuscript, I discuss the evaluation measures as well as outliers.
+
+```{r load datasets}
+
+MAR_5_lasso20 <- readRDS("MAR_5_lasso")
+MAR_7_lasso20 <- readRDS("MAR_7_lasso")
+
+MAR_5_ridge20 <- readRDS("MAR_5_ridge")
+MAR_7_ridge20 <- readRDS("MAR_7_ridge")
+
+```
+
+## Bias
+
+In the following chunks, bias calculations conform the description in the manuscript are performed.
+
+```{r bias lasso}
+
+# prop 0.25
+
+
+complete_MAR5_lasso <- MAR_5_lasso20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.matrix(.,) 
+
+
+cond1_MAR5_lasso <- MAR_5_lasso20[["Results_cond1"]]%>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.matrix(.,) 
+
+
+cond2_MAR5_lasso <- MAR_5_lasso20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.matrix(.,) 
+
+
+cond3_MAR5_lasso <- MAR_5_lasso20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.matrix(.,) 
+
+
+cond4_MAR5_lasso <- MAR_5_lasso20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.matrix(.,) 
+
+bias1 <- t(data.matrix(colMeans(cond1_MAR5_lasso - complete_MAR5_lasso)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(y)", model = "LASSO", mis_prop = 0.25)
+bias2 <- t(data.matrix(colMeans(cond2_MAR5_lasso - complete_MAR5_lasso)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(-y)", model = "LASSO", mis_prop = 0.25)
+bias3 <- t(data.matrix(colMeans(cond3_MAR5_lasso - complete_MAR5_lasso)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVreuse", model = "LASSO", mis_prop = 0.25)
+bias4 <- t(data.matrix(colMeans(cond4_MAR5_lasso - complete_MAR5_lasso)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVsep", model = "LASSO", mis_prop = 0.25)
+
+bias_25lasso <- rbind(bias1, bias2, bias3, bias4)
+
+# prop 0.75
+
+complete_MAR7_lasso <- MAR_7_lasso20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.matrix(.,) 
+
+
+cond1_MAR7_lasso <- MAR_7_lasso20[["Results_cond1"]]%>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond2_MAR7_lasso <- MAR_7_lasso20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond3_MAR7_lasso <- MAR_7_lasso20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .) %>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond4_MAR7_lasso <- MAR_7_lasso20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .) %>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+bias1 <- t(data.matrix(colMeans((cond1_MAR7_lasso - complete_MAR7_lasso), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(y)", model = "LASSO", mis_prop = 0.75)
+bias2 <- t(data.matrix(colMeans((cond2_MAR7_lasso - complete_MAR7_lasso), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(-y)", model = "LASSO", mis_prop = 0.75)
+bias3 <- t(data.matrix(colMeans((cond3_MAR7_lasso - complete_MAR7_lasso), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVreuse", model = "LASSO", mis_prop = 0.75)
+bias4 <- t(data.matrix(colMeans((cond4_MAR7_lasso - complete_MAR7_lasso), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVsep", model = "LASSO", mis_prop = 0.75)
+
+bias_75lasso <- rbind(bias1, bias2, bias3, bias4)
+
+bias_2575_lasso <- rbind(bias_25lasso, bias_75lasso)%>% select(c("model","mis_prop","cond","AUC", "brier", "sens", "spec", "cal_b0", "cal_b1", "CoxSnell", "sens_selection", "spec_selection")) 
+
+```
+
+```{r bias ridge}
+
+# prop 0.25
+
+complete_MAR5_ridge <- MAR_5_ridge20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.matrix(.,) 
+
+
+cond1_MAR5_ridge <- MAR_5_ridge20[["Results_cond1"]]%>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA)) %>% as.matrix(.,) 
+
+
+cond2_MAR5_ridge <- MAR_5_ridge20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,) 
+
+
+cond3_MAR5_ridge <- MAR_5_ridge20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,) 
+
+
+cond4_MAR5_ridge <- MAR_5_ridge20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,) 
+
+bias1 <- t(data.matrix(colMeans(cond1_MAR5_ridge - complete_MAR5_ridge)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(y)", model = "ridge", mis_prop = 0.25)
+bias2 <- t(data.matrix(colMeans(cond2_MAR5_ridge - complete_MAR5_ridge)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(-y)", model = "ridge", mis_prop = 0.25)
+bias3 <- t(data.matrix(colMeans(cond3_MAR5_ridge - complete_MAR5_ridge)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVreuse", model = "ridge", mis_prop = 0.25)
+bias4 <- t(data.matrix(colMeans(cond4_MAR5_ridge - complete_MAR5_ridge)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVsep", model = "ridge", mis_prop = 0.25)
+
+bias_25ridge <- rbind(bias1, bias2, bias3, bias4)
+
+# prop 0.75
+
+complete_MAR7_ridge <- MAR_7_ridge20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.matrix(.,) 
+
+
+cond1_MAR7_ridge <- MAR_7_ridge20[["Results_cond1"]]%>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond2_MAR7_ridge <- MAR_7_ridge20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond3_MAR7_ridge <- MAR_7_ridge20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .) %>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA)) %>%as.matrix(.,)
+
+
+cond4_MAR7_ridge <- MAR_7_ridge20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .) %>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% as.matrix(.,)
+
+bias1 <- t(data.matrix(colMeans((cond1_MAR7_ridge - complete_MAR7_ridge), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(y)", model = "ridge", mis_prop = 0.75)
+bias2 <- t(data.matrix(colMeans((cond2_MAR7_ridge - complete_MAR7_ridge), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(-y)", model = "ridge", mis_prop = 0.75)
+bias3 <- t(data.matrix(colMeans((cond3_MAR7_ridge - complete_MAR7_ridge), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVreuse", model = "ridge", mis_prop = 0.75)
+bias4 <- t(data.matrix(colMeans((cond4_MAR7_ridge - complete_MAR7_ridge), na.rm=T))) %>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVsep", model = "ridge", mis_prop = 0.75)
+
+bias_75ridge <- rbind(bias1, bias2, bias3, bias4)
+
+
+bias_2575_ridge <- rbind(bias_25ridge, bias_75ridge)%>% select(c("model","mis_prop","cond","AUC", "brier", "sens", "spec", "cal_b0", "cal_b1", "CoxSnell", "sens_selection", "spec_selection")) 
+
+```
+
+```{r table bias}
+
+bias2575lr <- rbind(bias_2575_lasso,bias_2575_ridge) 
+
+```
+
+## MSE
+
+In the following chunks, the MSE is calculated.
+
+```{r lasso mse}
+
+# n = 200, mis = 0.25
+
+complete_MAR5_lasso <- MAR_5_lasso20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.matrix(.,) 
+
+
+cond1_MAR5_lasso <- MAR_5_lasso20[["Results_cond1"]]%>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.matrix(.,) 
+
+
+cond2_MAR5_lasso <- MAR_5_lasso20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.matrix(.,) 
+
+
+cond3_MAR5_lasso <- MAR_5_lasso20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.matrix(.,) 
+
+
+cond4_MAR5_lasso <- MAR_5_lasso20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.matrix(.,) 
+
+MSE1 <- t(data.matrix(colMeans((cond1_MAR5_lasso - complete_MAR5_lasso)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(y)", model = "LASSO", mis_prop = 0.25)
+MSE2 <- t(data.matrix(colMeans((cond2_MAR5_lasso - complete_MAR5_lasso)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(-y)", model = "LASSO", mis_prop = 0.25)
+MSE3 <- t(data.matrix(colMeans((cond3_MAR5_lasso - complete_MAR5_lasso)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVreuse", model = "LASSO", mis_prop = 0.25)
+MSE4 <- t(data.matrix(colMeans((cond4_MAR5_lasso - complete_MAR5_lasso)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVsep", model = "LASSO", mis_prop = 0.25)
+
+MSE_25lasso <- rbind(MSE1, MSE2, MSE3, MSE4)
+
+# prop 0.75
+
+complete_MAR7_lasso <- MAR_7_lasso20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.matrix(.,) 
+
+
+cond1_MAR7_lasso <- MAR_7_lasso20[["Results_cond1"]]%>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond2_MAR7_lasso <- MAR_7_lasso20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond3_MAR7_lasso <- MAR_7_lasso20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .) %>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond4_MAR7_lasso <- MAR_7_lasso20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .) %>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+MSE1 <- t(data.matrix(colMeans((cond1_MAR7_lasso - complete_MAR7_lasso)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(y)", model = "LASSO", mis_prop = 0.75)
+MSE2 <- t(data.matrix(colMeans((cond2_MAR7_lasso - complete_MAR7_lasso)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(-y)", model = "LASSO", mis_prop = 0.75)
+MSE3 <- t(data.matrix(colMeans((cond3_MAR7_lasso - complete_MAR7_lasso)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVreuse", model = "LASSO", mis_prop = 0.75)
+MSE4 <- t(data.matrix(colMeans((cond4_MAR7_lasso - complete_MAR7_lasso)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVsep", model = "LASSO", mis_prop = 0.75)
+
+MSE_75lasso <- rbind(MSE1, MSE2, MSE3, MSE4)
+
+MSE_2575_lasso <- rbind(MSE_25lasso, MSE_75lasso)%>% select(c("model","mis_prop","cond","AUC", "brier", "sens", "spec", "cal_b0", "cal_b1", "CoxSnell", "sens_selection", "spec_selection")) 
+
+```
+
+```{r ridge MSE}
+
+# prop =0.25
+
+complete_MAR5_ridge <- MAR_5_ridge20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.matrix(.,) 
+
+
+cond1_MAR5_ridge <- MAR_5_ridge20[["Results_cond1"]]%>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA)) %>% as.matrix(.,) 
+
+
+cond2_MAR5_ridge <- MAR_5_ridge20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,) 
+
+
+cond3_MAR5_ridge <- MAR_5_ridge20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,) 
+
+
+cond4_MAR5_ridge <- MAR_5_ridge20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,) 
+
+MSE1 <- t(data.matrix(colMeans((cond1_MAR5_ridge - complete_MAR5_ridge)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(y)", model = "ridge", mis_prop = 0.25)
+MSE2 <- t(data.matrix(colMeans((cond2_MAR5_ridge - complete_MAR5_ridge)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(-y)", model = "ridge", mis_prop = 0.25)
+MSE3 <- t(data.matrix(colMeans((cond3_MAR5_ridge - complete_MAR5_ridge)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVreuse", model = "ridge", mis_prop = 0.25)
+MSE4 <- t(data.matrix(colMeans((cond4_MAR5_ridge - complete_MAR5_ridge)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVsep", model = "ridge", mis_prop = 0.25)
+
+MSE_25ridge <- rbind(MSE1, MSE2, MSE3, MSE4)
+
+# prop 0.75
+
+complete_MAR7_ridge <- MAR_7_ridge20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.matrix(.,) 
+
+
+cond1_MAR7_ridge <- MAR_7_ridge20[["Results_cond1"]]%>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond2_MAR7_ridge <- MAR_7_ridge20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond3_MAR7_ridge <- MAR_7_ridge20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .) %>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA)) %>%as.matrix(.,)
+
+
+cond4_MAR7_ridge <- MAR_7_ridge20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .) %>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% as.matrix(.,)
+
+MSE1 <- t(data.matrix(colMeans((cond1_MAR7_ridge - complete_MAR7_ridge)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(y)", model = "ridge", mis_prop = 0.75)
+MSE2 <- t(data.matrix(colMeans((cond2_MAR7_ridge - complete_MAR7_ridge)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(-y)", model = "ridge", mis_prop = 0.75)
+MSE3 <- t(data.matrix(colMeans((cond3_MAR7_ridge - complete_MAR7_ridge)^2, na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVreuse", model = "ridge", mis_prop = 0.75)
+MSE4 <- t(data.matrix(colMeans((cond4_MAR7_ridge - complete_MAR7_ridge)^2, na.rm=T))) %>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVsep", model = "ridge", mis_prop = 0.75)
+
+MSE_75ridge <- rbind(MSE1, MSE2, MSE3, MSE4)
+
+
+MSE_2575_ridge <- rbind(MSE_25ridge, MSE_75ridge)%>% select(c("model","mis_prop","cond","AUC", "brier", "sens", "spec", "cal_b0", "cal_b1", "CoxSnell", "sens_selection", "spec_selection")) 
+
+```
+
+```{r table MSE}
+
+
+MSE2575lr <- rbind(MSE_2575_lasso,MSE_2575_ridge) 
+
+
+```
+
+
+
+## Mean table
+
+Lastly, in the following chunks you can find code to compute the means per condition.
+
+```{r lasso means}
+
+# n = 200, mis = 0.25
+
+complete_MAR5_lasso <- MAR_5_lasso20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.matrix(.,) 
+
+
+cond1_MAR5_lasso <- MAR_5_lasso20[["Results_cond1"]]%>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.matrix(.,) 
+
+
+cond2_MAR5_lasso <- MAR_5_lasso20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.matrix(.,) 
+
+
+cond3_MAR5_lasso <- MAR_5_lasso20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.matrix(.,) 
+
+
+cond4_MAR5_lasso <- MAR_5_lasso20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.matrix(.,) 
+
+meancomp <- t(data.matrix(colMeans((complete_MAR5_lasso), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "no missingness", model = "LASSO", mis_prop = 0.25)
+mean1 <- t(data.matrix(colMeans(cond1_MAR5_lasso)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(y)", model = "LASSO", mis_prop = 0.25)
+mean2 <- t(data.matrix(colMeans(cond2_MAR5_lasso)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(-y)", model = "LASSO", mis_prop = 0.25)
+mean3 <- t(data.matrix(colMeans(cond3_MAR5_lasso)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVreuse", model = "LASSO", mis_prop = 0.25)
+mean4 <- t(data.matrix(colMeans(cond4_MAR5_lasso)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVsep", model = "LASSO", mis_prop = 0.25)
+
+mean_25lasso <- rbind(meancomp,mean1, mean2, mean3, mean4)
+
+# prop 0.75
+
+complete_MAR7_lasso <- MAR_7_lasso20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.matrix(.,) 
+
+
+cond1_MAR7_lasso <- MAR_7_lasso20[["Results_cond1"]]%>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond2_MAR7_lasso <- MAR_7_lasso20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond3_MAR7_lasso <- MAR_7_lasso20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .) %>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond4_MAR7_lasso <- MAR_7_lasso20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .) %>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+meancomp <- t(data.matrix(colMeans((complete_MAR7_lasso), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "no missingness", model = "LASSO", mis_prop = 0.75)
+mean1 <- t(data.matrix(colMeans((cond1_MAR7_lasso), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(y)", model = "LASSO", mis_prop = 0.75)
+mean2 <- t(data.matrix(colMeans((cond2_MAR7_lasso), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(-y)", model = "LASSO", mis_prop = 0.75)
+mean3 <- t(data.matrix(colMeans((cond3_MAR7_lasso), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVreuse", model = "LASSO", mis_prop = 0.75)
+mean4 <- t(data.matrix(colMeans((cond4_MAR7_lasso), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVsep", model = "LASSO", mis_prop = 0.75)
+
+mean_75lasso <- rbind(meancomp, mean1, mean2, mean3, mean4)
+
+mean_2575_lasso <- rbind(mean_25lasso, mean_75lasso)%>% select(c("model","mis_prop","cond","AUC", "brier", "sens", "spec", "cal_b0", "cal_b1", "CoxSnell", "sens_selection", "spec_selection")) 
+
+```
+
+```{r ridge means}
+
+
+
+# prop =0.25
+
+complete_MAR5_ridge <- MAR_5_ridge20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.matrix(.,) 
+
+
+cond1_MAR5_ridge <- MAR_5_ridge20[["Results_cond1"]]%>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA)) %>% as.matrix(.,) 
+
+
+cond2_MAR5_ridge <- MAR_5_ridge20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,) 
+
+
+cond3_MAR5_ridge <- MAR_5_ridge20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,) 
+
+
+cond4_MAR5_ridge <- MAR_5_ridge20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,) 
+
+meancomp <- t(data.matrix(colMeans((complete_MAR5_ridge), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "no missingness", model = "ridge", mis_prop = 0.25)
+mean1 <- t(data.matrix(colMeans(cond1_MAR5_ridge)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(y)", model = "ridge", mis_prop = 0.25)
+mean2 <- t(data.matrix(colMeans(cond2_MAR5_ridge)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(-y)", model = "ridge", mis_prop = 0.25)
+mean3 <- t(data.matrix(colMeans(cond3_MAR5_ridge)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVreuse", model = "ridge", mis_prop = 0.25)
+mean4 <- t(data.matrix(colMeans(cond4_MAR5_ridge)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVsep", model = "ridge", mis_prop = 0.25)
+
+mean_25ridge <- rbind(meancomp,mean1, mean2, mean3, mean4)
+
+# prop 0.75
+
+complete_MAR7_ridge <- MAR_7_ridge20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.matrix(.,) 
+
+
+cond1_MAR7_ridge <- MAR_7_ridge20[["Results_cond1"]]%>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond2_MAR7_ridge <- MAR_7_ridge20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA))%>% as.matrix(.,)
+
+
+cond3_MAR7_ridge <- MAR_7_ridge20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .) %>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0<(-4), NA))%>% mutate(cal_b0 = replace(cal_b0, cal_b0>4, NA))%>%mutate(cal_b1 = replace(cal_b1, cal_b1>10, NA)) %>%as.matrix(.,)
+
+
+cond4_MAR7_ridge <- MAR_7_ridge20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .) %>%as.data.frame(.,) %>% mutate(CoxSnell = replace(CoxSnell, CoxSnell<(-4), NA))%>% as.matrix(.,)
+
+meancomp <- t(data.matrix(colMeans((complete_MAR7_ridge), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "no missingness", model = "ridge", mis_prop = 0.75)
+mean1 <- t(data.matrix(colMeans((cond1_MAR7_ridge), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(y)", model = "ridge", mis_prop = 0.75)
+mean2 <- t(data.matrix(colMeans((cond2_MAR7_ridge), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-bef(-y)", model = "ridge", mis_prop = 0.75)
+mean3 <- t(data.matrix(colMeans((cond3_MAR7_ridge), na.rm=T)))%>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVreuse", model = "ridge", mis_prop = 0.75)
+mean4 <- t(data.matrix(colMeans((cond4_MAR7_ridge), na.rm=T))) %>% round(.,3) %>% as.data.frame(.,) %>% mutate(cond = "MI-CVsep", model = "ridge", mis_prop = 0.75)
+
+mean_75ridge <- rbind(meancomp,mean1, mean2, mean3, mean4)
+
+
+mean_2575_ridge <- rbind(mean_25ridge, mean_75ridge)%>% select(c("model","mis_prop","cond","AUC", "brier", "sens", "spec", "cal_b0", "cal_b1", "CoxSnell", "sens_selection", "spec_selection")) 
+
+```
+
+```{r table means}
+
+
+mean2575lr <- rbind(mean_2575_lasso,mean_2575_ridge) 
+
+
+```
