@@ -2,6 +2,8 @@
 
 This section contains supplementary figures accompanying the manuscript. 
 
+`Supplementary_figures` is the file containing plots referred to in the document.
+
 ## Folder structure
 The folder names should be read as follows (illustrated with an example):
 
