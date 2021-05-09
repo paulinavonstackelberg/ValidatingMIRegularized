@@ -15,4 +15,4 @@ This repository is split into several folders.
 - `Functions_simulation`: contains all functions needed to replicate this study.
 - `Datasets`: contains the N=50000 datasets generated for the current study as well as the two missingness patterns.
 - `Analysis`: contains the script needed to generate the tables.
-- `Supplementary_figures`: contains the supplementary figures of the remaining conditions, as mentioned in the manuscript.
+- `Supplementary_figures`: contains the supplementary figures, as mentioned in the manuscript.
