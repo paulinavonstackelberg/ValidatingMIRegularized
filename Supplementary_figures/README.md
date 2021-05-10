@@ -2,7 +2,7 @@
 
 This section contains supplementary figures accompanying the manuscript. Figures for all conditions are found in the subfolders.
 
-`Supplementary_figures` is the pdf file containing additional plots as referred to in the article.
+`Supplementary_file` is the pdf file containing additional plots as referred to in the article (reference "Supplementary file").
 
 ## Folder structure
 The folder names should be read as follows (illustrated with an example):
