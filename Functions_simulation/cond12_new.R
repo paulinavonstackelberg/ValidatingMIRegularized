@@ -1,5 +1,5 @@
 ##############################################################
-### Condition 1, 2, and also for complete (non-missing) CV ###
+### Condition 1 and also for complete (non-missing) CV #######
 ##############################################################
 
 
@@ -48,23 +48,6 @@ cond12_impdatloop <- function(dataset, thresh, num_param, model, true_param = tr
   results_test <- do.call(rbind, results_test)
   
   return(list("results_test" = results_test)) 
-}
-
-
-
-
-cond_12_gather <- function(imp_dat, model, thresh, num_param){
-  results_gather <- lapply(FUN = cond_12_new, X = imp_dat, model, thresh, num_param)
-  return(results_gather)
-}
-
-
-cond_12_gather <- function(data, model, thresh, num_param){
-  result <- list()
-  for(i in 1:5){
-    result[[i]] <- cond_12_new(data = data[[i]], model=model, thresh=thresh, num_param=num_param)
-  }
-  return(result)
 }
 
 
