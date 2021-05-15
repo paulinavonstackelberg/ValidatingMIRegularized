@@ -1,6 +1,6 @@
 ## Datasets
 
-In this folder, you can find the simulated *N*=50000 datasets, as well as the missingness patterns generated for the simulation study. These are later called in the scripts.
+In this folder, you can find the simulated *N*=50000 datasets, as well as the missingness patterns generated for the simulation study. These are later called in the scripts. These are the datasets you will start out with; from those large datasets, a smaller sample (*n* = 200 or 1000) is randomly drawn in each iteration.
 
 
 | File name       | Description of file                                                        |
