@@ -7,8 +7,7 @@
 
 miss_patt <- function(n_param){
   
-  set.seed(999)
-  
+  set.seed(999) # set a seed to make sure this is fixed for everyone; of course, you can also use your own seed if the goal is not to reproduce my results
   
   pattern_1 <- matrix(data = rep(x = 1, times = 10)) 
   pattern_1[c(sample(seq(1,10), size = 7, replace = F))] <- 0
