@@ -112,7 +112,7 @@ sim <- function(k_def, nsub, nsim, n_param, mis_prop, mis_mech = c("MCAR", "MAR"
     
   all_results <- list("Results_cond1" = results_cond1, "Results_cond2" = results_cond2 ,"Results_cond3" = results_cond3, "Results_cond4" = results_cond4, "data_spec" = data_spec,
                       "data_sub" = data_sub, "data_subamp" = data_subamp, "folds_def" = folds_def, "evaluate_sub_ext" = evaluate_sub_ext, "results_comp" = results_comp)
-  #"model_sub" = model_sub,"data_ext" = data_ext,
+  
   
   return(all_results)
   
