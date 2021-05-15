@@ -31,7 +31,13 @@ Use the project `Val_MIsim.Rproj`. The most important files are `sim_run_MAR_20.
 
 ### Example
 
-Here you can find a brief example how to run the following condition: sample size *n*=200, 200 iterations, missingness proportion of 0.25 under a MAR (missing at random) mechanism, LASSO regression. 
+Here you can find a brief example how to run the following condition: sample size *n*=200, 200 iterations, missingness proportion of 0.25 under a MAR (missing at random) mechanism, LASSO regression. Generally speaking, the following steps are always taken inside of this simulation (as also seen in `sim.R`):
+
+1) Draw a sample (*n*= 200, or 1000) from the *N*= 50000 dataset.
+2) Do the cross-validation on the complete (i.e., non-amputed) data. Save results.
+3) Ampute the sample (i.e., generate missingness).
+4) Do the cross-validation according to the procedure as described in MI-bef(y), MI-bef(-y), MI-CVsep, or MI-CVreuse. Save results.
+5) Return all results.
 
 ```R
 
