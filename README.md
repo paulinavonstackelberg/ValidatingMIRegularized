@@ -43,7 +43,7 @@ This simulation study was conducted in R (version 4.0.3) using RStudio (version 
 
 ## Permission and access
 
-This simulation study was approved by the Ethics Committee at Utrecht University (registration number 21-0473). The corresponding PDF can be found in the folder `Documents`. The data are stored in the archives belonging to Utrecht University for a minimum duration of 10 years. All code needed to reproduce the simulation study is available via [Github](https://github.com/paulinavonstackelberg/ValidatingMIRegularized). *Note*: the output files are too big to be stored on Github - however, all R scripts are provided and therefore replication is possible. Explanations regarding the functions and procedure can be found in `Functions_simulation`.
+This simulation study was approved by the Ethics Committee at Utrecht University (registration number 21-0473). The corresponding PDF can be found in the folder `Documents`. The data are stored in the archives belonging to Utrecht University for a minimum duration of 10 years. All code needed to reproduce the simulation study is available via [Github](https://github.com/paulinavonstackelberg/ValidatingMIRegularized). *Note*: the output files are too big to be stored on Github (but will be stored on the university servers) - however, all R scripts are provided and therefore replication is possible. Explanations regarding the functions and procedure can be found in `Functions_simulation`.
 
 ## Contact
 
