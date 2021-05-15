@@ -31,8 +31,9 @@ This simulation study was conducted in R (version 4.0.3) using RStudio (version 
 | `caret`     | 6.0-86   | Splitting the data into folds for cross-validation   |
 | `pROC`      | 1.17.0.1 | Calculating the AUC                                  |
 
-## Ethical approval
+## Permission and access
 
-This simulation study was approved by the Ethics Committee at Utrecht University (registration number 21-0473). The corresponding PDF can be found in the folder `Documents`. The data are stored in the archives belonging to Utrecht University for a minimum duration of 10 years. 
+This simulation study was approved by the Ethics Committee at Utrecht University (registration number 21-0473). The corresponding PDF can be found in the folder `Documents`. The data are stored in the archives belonging to Utrecht University for a minimum duration of 10 years. All code is available via [Github](https://github.com/paulinavonstackelberg/ValidatingMIRegularized).
+
 
 
