@@ -37,7 +37,9 @@ This simulation study was approved by the Ethics Committee at Utrecht University
 
 ## Contact
 
-For questions or suggestions, please contact the person responsible for this archive: Paulina von Stackelberg (paulina-von-stackelberg@web.de).
+For questions or suggestions, please contact the person responsible for this archive.
+**Name**: Paulina von Stackelberg 
+**Email**: paulina-von-stackelberg@web.de
 
 
 
