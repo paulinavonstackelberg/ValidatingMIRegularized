@@ -43,7 +43,7 @@ This simulation study was conducted in R (version 4.0.3) using RStudio (version 
 
 ## Privacy and ethical approval
 
-As this is a simulation study, no privacy issues had to be dealt with. This study was approved by the Ethics Committee at Utrecht University (registration number 21-0473). The corresponding PDF can be found in the folder `Documents`.
+As this is a simulation study in which not only missingness, but also the data were simulated, no privacy issues had to be dealt with. This study was approved by the Ethics Committee at Utrecht University (registration number 21-0473). The corresponding PDF can be found in the folder `Documents`.
 
 ## Permission and access
 
