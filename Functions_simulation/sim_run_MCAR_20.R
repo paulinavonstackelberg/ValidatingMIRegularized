@@ -87,7 +87,7 @@ set.seed(1357)
 clusterSetRNGStream(cl =clust, iseed =1357)
 MCAR_4_ridge <- sim(k_def = 3, data_spec = data_spec_1, nsub = 1000, nsim = 200, n_param = 20, mis_prop = 0.75, mis_mech = "MCAR", mis_pattern = mis_pattern, model = 2)
 
-
+# save the output
 saveRDS(MCAR_1_lasso, "MCAR_1_lasso")
 saveRDS(MCAR_2_lasso, "MCAR_2_lasso")
 saveRDS(MCAR_3_lasso, "MCAR_3_lasso")
@@ -143,7 +143,7 @@ set.seed(2395)
 clusterSetRNGStream(cl =clust, iseed = 2395)
 MCAR_8_ridge <- sim(k_def = 3, data_spec = data_spec_2, nsub = 1000, nsim = 200, n_param = 20, mis_prop = 0.75, mis_mech = "MCAR", mis_pattern = mis_pattern, model = 2)
 
-
+# save the output
 saveRDS(MCAR_5_lasso, "MCAR_5_lasso")
 saveRDS(MCAR_6_lasso, "MCAR_6_lasso")
 saveRDS(MCAR_7_lasso, "MCAR_7_lasso")
