@@ -41,6 +41,7 @@ This simulation study was conducted in R (version 4.0.3) using RStudio (version 
 | `caret`     | 6.0-86   | Splitting the data into folds for cross-validation   |
 | `pROC`      | 1.17.0.1 | Calculating the AUC                                  |
 | `tidyverse` | 1.3.0    | Data wrangling                                       |
+| `ggplot2`   | 3.3.2    | Data visualization                                   |
 
 ## Privacy and ethical approval
 
