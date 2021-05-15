@@ -5,12 +5,12 @@
 
 # this function is applied to each imputed dataset
 
+# condition 1: generate new results according to the imputation scheme using MI-bef(y)
+
 cond_12_new <- function(data, model, thresh, num_param, true_param, k_def){
   nums <- seq(1:k_def)
   results_test <- matrix(data = 0, nrow = k_def, ncol = 12)
   colnames(results_test) <- c("AUC", "brier", "sens", "spec", "cal_b0", "cal_b1", "MSPE" , "CoxSnell", "McFadden", "sens_selection", "spec_selection","lambda")
- # models <- list()
-  
   for (fold in 1:k_def){
     test_imp <- data[[fold]]
     notfold <- setdiff(nums, fold) # these are the training set folds
@@ -34,7 +34,7 @@ cond_12_new <- function(data, model, thresh, num_param, true_param, k_def){
     }
   }
   
-  # return 
+  # return output
   
   results <- list("results_test" = results_test)
   return(results)
@@ -46,7 +46,6 @@ cond12_impdatloop <- function(dataset, thresh, num_param, model, true_param = tr
   # pick the results apart
   results_test <- lapply(result, "[[", 1)
   results_test <- do.call(rbind, results_test)
-  
   return(list("results_test" = results_test)) 
 }
 
