@@ -1,3 +1,3 @@
 ## Documents
 
-This folder contains the manuscript (& TeX files) as well as the FETC ethical approval form.
+This folder contains the FETC ethical approval form.
