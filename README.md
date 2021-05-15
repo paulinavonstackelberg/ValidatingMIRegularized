@@ -40,6 +40,7 @@ This simulation study was conducted in R (version 4.0.3) using RStudio (version 
 | `glmnet`    | 4.1-1    | Tuning and fitting LASSO and Ridge regression models |
 | `caret`     | 6.0-86   | Splitting the data into folds for cross-validation   |
 | `pROC`      | 1.17.0.1 | Calculating the AUC                                  |
+| `tidyverse` | 1.3.0    | Data wrangling                                       |
 
 ## Privacy and ethical approval
 
