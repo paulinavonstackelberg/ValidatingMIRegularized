@@ -20,7 +20,7 @@ This repository is split into several folders.
 1) `Analysis`: contains the script needed to generate the tables.
 2) `Datasets`: contains the N=50000 datasets generated for the current study as well as the two missingness patterns.
 3) `Documents`: contains the ethical review document and the thesis manuscript (& corresponding TeX files).
-4) `Functions_simulation`: contains all functions needed to replicate this study.
+4) `Functions_simulation`: contains all functions (& corresponding descriptions) needed to replicate this study. Here, you can also find brief instructions how to run this simulation study.
 5) `Results`: contains the results obtained in this simulation study. 
 6) `Supplementary_figures`: contains the supplementary figures for all conditions. Here, you can find the PDF `Supplementary_file` which is referred to in-text.
 
