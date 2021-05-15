@@ -19,7 +19,7 @@ When building prediction models using real-world data, two procedures often need
 
 ## Contents
 
-This repository is split into several folders, organized following the sequence of steps taken in conducting this study. 
+This repository is split into several folders, organized following the sequence of steps taken when conducting this study. 
 
 1) `Functions_simulation`: contains all functions (& corresponding descriptions) needed to replicate this study. Here, you can also find brief instructions how to run this simulation study.
 2) `Datasets`: contains the N=50000 datasets generated for the current study as well as the two missingness patterns.
