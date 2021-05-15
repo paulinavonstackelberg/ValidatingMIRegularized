@@ -36,7 +36,7 @@ Here you can find a brief example how to run the following condition: sample siz
 1) Draw a sample (*n*= 200, or 1000) from the *N*= 50000 dataset.
 2) Do the cross-validation on the complete (i.e., non-amputed) data. Save results.
 3) Ampute the sample (i.e., generate missingness).
-4) Do the cross-validation according to the procedure as described in MI-bef(y), MI-bef(-y), MI-CVsep, or MI-CVreuse. Save results.
+4) Do the cross-validation according to the procedure as described in MI-bef(y), MI-bef(-y), MI-CVsep, or MI-CVreuse (see manuscript). Save results.
 5) Return all results.
 
 ```R
