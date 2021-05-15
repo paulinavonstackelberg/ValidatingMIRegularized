@@ -77,7 +77,7 @@ data_sim <- function(means, vars, cor_cond = c('ind', 'corr'),  n, betas, imb_le
 }
 
 
-
+# calling the different kinds of N=50000 datasets (which differ in terms of i) correlations between covariates as well as ii) number of covariates)
 
 call_datasim <- function(scenario = c(1, 2, 3, 4), n){
   
