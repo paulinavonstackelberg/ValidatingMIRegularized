@@ -4,7 +4,7 @@ This folder contains all functions used in the simulation study. The functions a
 
 ## How to run this simulation study
 
-Use the project `Val_MIsim.Rproj`. The most important files are `sim_run_MAR_20.R`, `sim_run_MAR_10.R`, `sim_run_MCAR_20.R` and `sim_run_MCAR_10.R`. In these files, `sim.R` is called for each of the conditions. Therefore, you can run these scripts to generate and save the output for the study. *Note*: As imputation can become computationally intensive when nested in cross-validation, I parallelized parts of this simulation study using the package `parallel` (version 4.0.3) in R, using 7 cores on a personal computer. Below the table describing the functions, you can find a brief example. The seeds used can be found in the main scripts (e.g., `sim_run_MAR_20.R`).
+Use the project `Val_MIsim.Rproj`. The most important files are `sim_run_MAR_20.R`, `sim_run_MAR_10.R`, `sim_run_MCAR_20.R` and `sim_run_MCAR_10.R`. In these files, `sim.R` is called for each of the conditions. Therefore, you can run these scripts to generate and save the output for the study. *Note*: As imputation can become computationally intensive when nested in cross-validation, I parallelized parts of this simulation study using the package `parallel` (version 4.0.3) in R, using 7 cores on a personal computer (Linux-based, but this way of paralellizing also works on Windows computers). Below the table describing the functions, you can find a brief example. A seed is set before running a selected condition, and can be found in the main scripts (e.g., in `sim_run_MAR_20.R`).
 
 
 
