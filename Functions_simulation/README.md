@@ -1,6 +1,6 @@
 ## Functions
 
-This folder contains all functions used in the simulation study. The functions are grouped into different .R files based on their purpose; a description of these files, and the relevant functions they contain, can be found in the table below. <br/>
+This folder contains all functions used in the simulation study. The functions are grouped into different .R files based on their purpose (e.g., a file with evaluation functions, or a file containing functions for CV splitting); a description of these files, and the relevant functions they contain, can be found in the table below. <br/>
 
 ## How to run this simulation study
 
