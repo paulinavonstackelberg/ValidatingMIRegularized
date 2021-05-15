@@ -4,9 +4,9 @@ This repository contains all files needed to replicate the simulation study resu
 
 ## Simulation period
 
-Preparation & simulation period: February 1, 2021 - May 10, 2021
+**Preparation & simulation period**: February 1, 2021 - May 10, 2021
 
-Date manuscript submission: May 10, 2021
+**Date manuscript submission**: May 10, 2021
 
 ## Abstract
 
