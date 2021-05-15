@@ -24,9 +24,8 @@ This repository is split into several folders, organized following the sequence 
 1) `Functions_simulation`: contains all functions (& corresponding descriptions) needed to replicate this study. Here, you can also find brief instructions how to run this simulation study.
 2) `Datasets`: contains the N=50000 datasets generated for the current study as well as the two missingness patterns.
 3) `Analysis`: contains the script needed to generate the tables, as well as the script used to generate plots.
-4) `Results`: contains the results obtained in this simulation study.
-5) `Documents`: contains the ethical review document and the thesis manuscript (& corresponding TeX files).
-6) `Supplementary_figures`: contains the supplementary figures for all conditions. Here, you can find the PDF [`Supplementary_file`](https://github.com/paulinavonstackelberg/ValidatingMIRegularized/blob/main/Supplementary_figures/Supplementary_file.pdf) which is referred to in the manuscript (S1, S2).
+4) `Documents`: contains the documents pertaining to this study.
+5) `Supplementary_figures`: contains the supplementary figures for all conditions. Here, you can find the PDF [`Supplementary_file`](https://github.com/paulinavonstackelberg/ValidatingMIRegularized/blob/main/Supplementary_figures/Supplementary_file.pdf) which is referred to in the manuscript (S1, S2).
 
 ## Software requirements
 
