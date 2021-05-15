@@ -5,7 +5,7 @@
 source("lasso_ridge_model.R")
 source("lasso_ridge_predict.R")
 
-
+# condition 3: generate new results according to the imputation scheme using MI-CVreuse
 
 cond_3_new <- function(data, model, thresh, num_param, true_param = true_param, k_def){
   nums <- seq(1:k_def)
@@ -86,6 +86,7 @@ cond_3_new <- function(data, model, thresh, num_param, true_param = true_param, 
   
 }
 
+# condition 4: generate new results according to the imputation scheme using MI-CVsep
 
 cond_4_new <- function(data, model, thresh, folds, num_param, true_param = true_param, k_def){
   nums <- seq(1:k_def)
