@@ -2,7 +2,9 @@
 
 This repository contains all files needed to replicate the simulation study presented in *"How to validate regularized regression models on incomplete data"*. This project served as my MSc thesis, and was completed at the Methodology & Statistics department at Utrecht University, Netherlands.
 
-## Simulation period
+## Simulation period 
+
+**Author**: Paulina von Stackelberg
 
 **Preparation & simulation period**: February 1, 2021 - May 10, 2021
 
