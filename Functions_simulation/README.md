@@ -1,4 +1,14 @@
-| File name             | Functions contained in the file                                                                                                          | Description of functions                                                                                                                                                                                                                                                                                                                                      |
+## Functions
+
+This folder contains all functions used in the simulation study. A description of the files and the relevant functions they contain can be found in the table below.
+
+
+
+
+
+
+
+| File name             | Functions contained in file                                                                                                        | Description of functions                                                                                                                                                                                                                                                                                                                                      |
 |-----------------------|------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | CV_folds.R            | 1) CV_fold <br/>  2) CV_fold_extract<br/>  3) CV_fold_extract_imp                                                                        | - creating the CV folds <br/>  - extracting the rows in the data corresponding to the respective CV folds <br/>  - extracting the rows in the data corresponding to the respective CV fold per imputed dataset                                                                                                                                                |
 | Functions_eval.R      | 1) brier_calc <br/>  2) calibration_calc <br/>  3) R2_calc <br/>  4) AUC_calc <br/>  5) sens_spec_calc <br/>  6) lasso_select_calc <br/> | - file containing the functions to compute the Brier score, calibration, pseudo R2, AUC, sensitivity, specificity, and sensitivity/specificity of selection.                                                                                                                                                                                                  |
