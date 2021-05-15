@@ -18,6 +18,19 @@ This repository is split into several folders.
 - `Results`: contains the results obtained in this simulation study. 
 - `Supplementary_figures`: contains the supplementary figures for all conditions. Also, this folder contains the PDF `Supplementary_file` which is referred to in-text.
 
+## Software requirements
+
+This simulation study was conducted in R (version 4.0.3) using RStudio (version 1.2.5042). Below you can find packages used and the specific versions; I cannot guarantee that exactly similar results are obtained with other package versions.
+
+| Package     | Version  | Usage                                                |
+|-------------|----------|------------------------------------------------------|
+| `MASS`      | 7.3-53   | Generating *N*=50000 datasets                        |
+| `DescTools` | 0.99.40  | Generating *N*=50000 datasets                        |
+| `mice`      | 3.13.0   | Performing multiple imputation                       |
+| `glmnet`    | 4.1-1    | Tuning and fitting LASSO and Ridge regression models |
+| `caret`     | 6.0-86   | Splitting the data into folds for cross-validation   |
+| `pROC`      | 1.17.0.1 | Calculating the AUC                                  |
+
 ## Ethical approval
 
 This study was approved by the Ethics Committee at Utrecht University (registration number 21-0473). The corresponding PDF can be found in the folder `Documents`. 
