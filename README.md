@@ -33,5 +33,5 @@ This simulation study was conducted in R (version 4.0.3) using RStudio (version 
 
 ## Ethical approval
 
-This study was approved by the Ethics Committee at Utrecht University (registration number 21-0473). The corresponding PDF can be found in the folder `Documents`. All files, including the output, are stored in the archives belonging to Utrecht University. The data are stored for a minimum duration of 10 years. 
+This study was approved by the Ethics Committee at Utrecht University (registration number 21-0473); no new data was collected. The corresponding PDF can be found in the folder `Documents`. All files, including the output, are stored in the archives belonging to Utrecht University. They are stored for a minimum duration of 10 years. 
 
