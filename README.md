@@ -11,11 +11,12 @@ When building prediction models using real-world data, two procedures often need
 
 This repository is split into several folders. 
 
-- `Documents`: contains the ethical review document.
+- `Documents`: contains the ethical review document and the manuscript (& TeX files).
 - `Functions_simulation`: contains all functions needed to replicate this study.
 - `Datasets`: contains the N=50000 datasets generated for the current study as well as the two missingness patterns.
 - `Analysis`: contains the script needed to generate the tables.
-- `Supplementary_figures`: contains the supplementary figures for all conditions. Also, this folder contains the file `Supplementary_file` which is referred to in-text.
+- `Results`: contains the results obtained in this simulation study. 
+- `Supplementary_figures`: contains the supplementary figures for all conditions. Also, this folder contains the PDF `Supplementary_file` which is referred to in-text.
 
 ## Ethical approval
 
