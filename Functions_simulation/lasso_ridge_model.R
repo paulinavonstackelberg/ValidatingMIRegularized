@@ -2,7 +2,11 @@
 ### Lasso and Ridge regression ###
 ##################################
 
+## In this script, you can find the code needed to fit (and tune!) the Ridge and LASSO models on the training data
+
 source("Functions_eval.R")
+
+# LASSO regression
 
 lasso_model <- function(train, thresh, num_param){
   
@@ -31,7 +35,7 @@ lasso_model <- function(train, thresh, num_param){
   
 }
 
-
+# Ridge regression
 
 ridge_model <- function(train, thresh, num_param){
   train = data.matrix(train)
@@ -60,11 +64,12 @@ ridge_model <- function(train, thresh, num_param){
   
 }
 
+# extracting the training and test sets
 
 extract_traintest <- function(imp_dat, ig, train = c(0,1)){
   if (train == 0){
-    return(test_imp <- imp_dat[ig,])
+    return(test_imp <- imp_dat[ig,]) # test set
   } else{
-    return(train_imp <- imp_dat[!ig,])
+    return(train_imp <- imp_dat[!ig,]) # training set
   }
 }
