@@ -1,0 +1,332 @@
+---
+title: "NA and error calculations"
+author: "Paulina von Stackelberg"
+date: "8 5 2021"
+output: html_document
+---
+
+In this script, you can find code to generate the proportion of potential errors as found in the manuscript.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,warning=FALSE,message=FALSE}
+library(tidyverse)
+```
+
+
+```{r}
+
+# load the output
+
+MAR_5_lasso20 <- readRDS("MAR_5_lasso")
+MAR_7_lasso20 <- readRDS("MAR_7_lasso")
+MAR_5_ridge20 <- readRDS("MAR_5_ridge")
+MAR_7_ridge20 <- readRDS("MAR_7_ridge")
+
+
+```
+
+
+Prepare the LASSO and Ridge files.
+
+```{r}
+
+# prepare the lasso files
+
+cond1_MAR5_lasso <- MAR_5_lasso20[["Results_cond1"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.data.frame(.,) %>%
+  mutate(condition= 'MI-bef(y)')
+
+cond2_MAR5_lasso <- MAR_5_lasso20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.data.frame(.,)%>%
+  mutate(condition = 'MI-bef(-y)')
+
+cond3_MAR5_lasso <- MAR_5_lasso20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVreuse')
+
+cond4_MAR5_lasso <- MAR_5_lasso20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVsep')
+
+complete_MAR5_lasso <- MAR_5_lasso20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'no missingness')
+
+merged_data_5<- rbind(cond1_MAR5_lasso, cond2_MAR5_lasso, cond3_MAR5_lasso, cond4_MAR5_lasso, complete_MAR5_lasso)
+
+
+
+cond1_MAR7_lasso <- MAR_7_lasso20[["Results_cond1"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.data.frame(.,) %>%
+  mutate(condition = 'MI-bef(y)')
+
+cond2_MAR7_lasso <- MAR_7_lasso20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.data.frame(.,)%>%
+  mutate(condition = 'MI-bef(-y)')
+
+cond3_MAR7_lasso <- MAR_7_lasso20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition= 'MI-CVreuse')
+
+cond4_MAR7_lasso <- MAR_7_lasso20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVsep')
+
+complete_MAR7_lasso <- MAR_7_lasso20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'no missingness')
+
+merged_data_7 <- rbind(cond1_MAR7_lasso, cond2_MAR7_lasso, cond3_MAR7_lasso, cond4_MAR7_lasso, complete_MAR7_lasso)
+
+
+# merge merged_data_5 and merged_data_7
+
+merged_data_5 <- merged_data_5 %>% mutate(mis_prop = 0.25)
+merged_data_7 <- merged_data_7 %>% mutate(mis_prop = 0.75)
+merged_data_57_lasso<- rbind(merged_data_5, merged_data_7)%>% mutate(model = "LASSO")
+
+```
+
+
+
+
+```{r}
+
+# prepare the ridge files
+
+
+cond1_MAR5_ridge <- MAR_5_ridge20[["Results_cond1"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.data.frame(.,) %>%
+  mutate(condition= 'MI-bef(y)')
+
+cond2_MAR5_ridge <- MAR_5_ridge20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.data.frame(.,)%>%
+  mutate(condition = 'MI-bef(-y)')
+
+cond3_MAR5_ridge <- MAR_5_ridge20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVreuse')
+
+cond4_MAR5_ridge <- MAR_5_ridge20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVsep')
+
+complete_MAR5_ridge <- MAR_5_ridge20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'no missingness')
+
+merged_data_5<- rbind(cond1_MAR5_ridge, cond2_MAR5_ridge, cond3_MAR5_ridge, cond4_MAR5_ridge, complete_MAR5_ridge)
+
+
+cond1_MAR7_ridge <- MAR_7_ridge20[["Results_cond1"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .) %>% as.data.frame(.,) %>%
+  mutate(condition = 'MI-bef(y)')
+
+cond2_MAR7_ridge <- MAR_7_ridge20[["Results_cond2"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>% as.data.frame(.,)%>%
+  mutate(condition = 'MI-bef(-y)')
+
+cond3_MAR7_ridge <- MAR_7_ridge20[["Results_cond3"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition= 'MI-CVreuse')
+
+cond4_MAR7_ridge <- MAR_7_ridge20[["Results_cond4"]] %>% lapply(., FUN = function(i) do.call(rbind, i)) %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% lapply(., FUN= colMeans, na.rm=T)%>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'MI-CVsep')
+
+complete_MAR7_ridge <- MAR_7_ridge20[["results_comp"]] %>% lapply(., FUN=function(i) sapply(i, colMeans, na.rm=T)) %>% lapply(., FUN = t) %>% do.call(rbind, .)%>%as.data.frame(.,)%>%
+  mutate(condition = 'no missingness')
+
+merged_data_7 <- rbind(cond1_MAR7_ridge, cond2_MAR7_ridge, cond3_MAR7_ridge, cond4_MAR7_ridge, complete_MAR7_ridge)
+
+
+# merge merged_data_5 and merged_data_7
+
+merged_data_5 <- merged_data_5 %>% mutate(mis_prop = 0.25)
+merged_data_7 <- merged_data_7 %>% mutate(mis_prop = 0.75)
+merged_data_57_ridge<- rbind(merged_data_5, merged_data_7)%>% mutate(model = "Ridge")
+
+```
+
+Calculate the problem percentages as reported.
+
+
+```{r calculate problem percentages}
+
+# bind the lasso and ridge files together
+
+merged_data_57_ridgeLasso <- rbind(merged_data_57_ridge, merged_data_57_lasso)
+
+merged_data_57_ridgeLasso %>%
+  group_by(model, condition, mis_prop)  %>% 
+  count(CoxSnell<(-4))  %>% mutate(percentage = n /2) %>% 
+  rename( logical = 'CoxSnell < (-4)') %>% 
+  filter(logical == 'TRUE')
+
+merged_data_57_ridgeLasso %>%
+  group_by(model, condition, mis_prop)  %>% 
+  count(cal_b0 > 4)  %>% mutate(percentage = n /2) %>% 
+  rename( logical = 'cal_b0 > 4') %>% 
+  filter(logical == 'TRUE')
+
+merged_data_57_ridgeLasso %>%
+  group_by(model, condition, mis_prop)  %>% 
+  count(cal_b0 < (-4))  %>% 
+  mutate(percentage = n /2) %>% 
+  rename( logical = 'cal_b0 < (-4)') %>% 
+  filter(logical == 'TRUE')
+
+merged_data_57_ridgeLasso %>%
+  group_by(model, condition, mis_prop)  %>% 
+  count(cal_b1 > 10)  %>% 
+  mutate(percentage = n /2) %>% 
+  rename( logical = 'cal_b1 > 10') %>% 
+  filter(logical == 'TRUE')
+
+
+```
+
+Calculate the NA cases.
+
+
+```{r calculate NA percentage}
+# for mis = 0.25
+
+cond1<-MAR_5_lasso20[["Results_cond1"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.) %>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "LASSO", condition = 1, mis_prop = 0.25)
+
+cond2<-MAR_5_lasso20[["Results_cond2"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.) %>% 
+  do.call(rbind,.)%>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "LASSO", condition = 2, mis_prop = 0.25)
+
+cond3<-MAR_5_lasso20[["Results_cond3"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.)%>% 
+  do.call(rbind,.)%>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "LASSO", condition = 3, mis_prop = 0.25)
+
+cond4<-MAR_5_lasso20[["Results_cond4"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.)%>% 
+  do.call(rbind,.)%>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "LASSO", condition = 4, mis_prop = 0.25)
+
+conds_lasso <- rbind(cond1, cond2, cond3, cond4)
+
+cond1<-MAR_5_ridge20[["Results_cond1"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.) %>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "ridge", condition = 1, mis_prop = 0.25)
+
+cond2<-MAR_5_ridge20[["Results_cond2"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.) %>% 
+  do.call(rbind,.)%>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "ridge", condition = 2, mis_prop = 0.25)
+
+cond3<-MAR_5_ridge20[["Results_cond3"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.)%>% 
+  do.call(rbind,.)%>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "ridge", condition = 3, mis_prop = 0.25)
+
+cond4<-MAR_5_ridge20[["Results_cond4"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.)%>% 
+  do.call(rbind,.)%>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "ridge", condition = 4, mis_prop = 0.25)
+
+conds_ridge <- rbind(cond1, cond2, cond3, cond4)
+conds_25 <- rbind(conds_lasso, conds_ridge)
+
+
+# for mis = 0.75
+
+cond1<-MAR_7_lasso20[["Results_cond1"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.) %>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "LASSO", condition = 1, mis_prop = 0.75)
+
+cond2<-MAR_7_lasso20[["Results_cond2"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.) %>% 
+  do.call(rbind,.)%>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "LASSO", condition = 2, mis_prop = 0.75)
+
+cond3<-MAR_7_lasso20[["Results_cond3"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.)%>% 
+  do.call(rbind,.)%>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "LASSO", condition = 3, mis_prop = 0.75)
+
+cond4<-MAR_7_lasso20[["Results_cond4"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.)%>% 
+  do.call(rbind,.)%>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "LASSO", condition = 4, mis_prop = 0.75)
+
+conds_lasso <- rbind(cond1, cond2, cond3, cond4)
+
+cond1<-MAR_7_ridge20[["Results_cond1"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.) %>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "ridge", condition = 1, mis_prop = 0.75)
+
+cond2<-MAR_7_ridge20[["Results_cond2"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.) %>% 
+  do.call(rbind,.)%>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "ridge", condition = 2, mis_prop = 0.75)
+
+cond3<-MAR_7_ridge20[["Results_cond3"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.)%>% 
+  do.call(rbind,.)%>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "ridge", condition = 3, mis_prop = 0.75)
+
+cond4<-MAR_7_ridge20[["Results_cond4"]] %>%
+  do.call(rbind, .) %>% 
+  do.call(rbind,.)%>% 
+  do.call(rbind,.)%>% 
+  as.data.frame(.,) %>% 
+  mutate(model = "ridge", condition = 4, mis_prop = 0.75)
+
+conds_ridge <- rbind(cond1, cond2, cond3, cond4)
+conds_75 <- rbind(conds_lasso, conds_ridge)
+
+# bind all
+
+conds_2575 <- rbind(conds_25, conds_75)
+
+
+# count NAS
+
+# for scenarios 2,3,4: we have 75 predictions * 200 iterations = 15000 predictions/rows in total per scenario
+
+summary234 <- conds_2575 %>%
+  group_by(model, condition, mis_prop) %>% 
+  filter(condition == c(2,3,4))  %>% 
+  summarise_all(funs(sum(is.na(.)))) 
+
+summary234 <-data.matrix(summary234)
+(summary234[,4:15] <- summary234[,4:15]/150)
+
+# for scenario 1: we have 15 predictions * 200 iterations = 3000 predictions/rows in total per scenario
+
+summary1 <- conds_2575 %>% 
+  group_by(model, condition, mis_prop) %>% 
+  filter(condition == c(1)) %>% 
+  summarise_all(funs(sum(is.na(.)))) 
+
+summary1 <-data.matrix(summary1)
+(summary1[,4:15] <- summary1[,4:15]/30)
+
+
+```
+
+
+
