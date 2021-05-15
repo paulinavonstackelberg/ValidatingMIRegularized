@@ -35,5 +35,9 @@ This simulation study was conducted in R (version 4.0.3) using RStudio (version 
 
 This simulation study was approved by the Ethics Committee at Utrecht University (registration number 21-0473). The corresponding PDF can be found in the folder `Documents`. The data are stored in the archives belonging to Utrecht University for a minimum duration of 10 years. All code is available via [Github](https://github.com/paulinavonstackelberg/ValidatingMIRegularized).
 
+## Contact
+
+For questions or suggestions, please contact the person responsible for this archive: Paulina von Stackelberg (paulina-von-stackelberg@web.de).
+
 
 
