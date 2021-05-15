@@ -1,6 +1,6 @@
 # How to validate regularized regression models on incomplete data
 
-This repository contains all files needed to replicate the results obtained in the simulation study reported in the paper "How to validate regularized regression models on incomplete data". 
+This repository contains all files needed to replicate the simulation study results presented in *"How to validate regularized regression models on incomplete data"*. This project served as my MSc thesis, and was completed at the Methodology & Statistics department at Utrecht University.
 
 ## Abstract
 
@@ -16,3 +16,8 @@ This repository is split into several folders.
 - `Datasets`: contains the N=50000 datasets generated for the current study as well as the two missingness patterns.
 - `Analysis`: contains the script needed to generate the tables.
 - `Supplementary_figures`: contains the supplementary figures for all conditions. Also, this folder contains the file `Supplementary_file` which is referred to in-text.
+
+## Ethical approval
+
+This study was approved by the Ethics Committee at Utrecht University (registration number 21-0473). The corresponding PDF can be found in the folder `Documents`. 
+
