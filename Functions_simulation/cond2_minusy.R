@@ -4,6 +4,8 @@
 
 # folds are defined in folds_def, and the amputed datasets are in data_subamp
 
+# condition 2: generate new results according to the imputation scheme using MI-bef(-y)
+
 cond_2y <- function(data, model, thresh, num_param, true_param, k_def){
   nums <- seq(1:k_def)
   results_test <- matrix(data = 0, nrow = k_def, ncol = 12)
@@ -91,6 +93,7 @@ cond_2y <- function(data, model, thresh, num_param, true_param, k_def){
   return(results)
 }
 
+# replace the imputed y values with the actual ones
 
 replace_y <- function(test_set, y_real, num_param){
   test_set[, (num_param + 1)] <- y_real
