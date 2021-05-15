@@ -1,3 +1,10 @@
+####################
+#### Prediction ####
+####################
+
+## In this script, you can find the code needed to predict on the test set, using the model from the training set
+
+
 library(glmnet)
 
 pred_test <- function(model_fit, test, lambda, num_param, thresh, true_param, model){
@@ -36,7 +43,7 @@ pred_test <- function(model_fit, test, lambda, num_param, thresh, true_param, mo
 }
 
 
-sub_ext_pred <- function(model_test, test, num_param, thresh, true_param, model){
+sub_ext_pred <- function(model_test, test, num_param, thresh, true_param, model){ # predict the outcome in the external test set, using the model fitted on the entire subsampled dataset
   results <- list()
   for (i in 1:length(model_test)){
     results[[i]] <- pred_test(model = model, model_fit = model_test[[i]][["model"]], test = test[[i]], lambda = model_test[[i]][["lambda"]], num_param = num_param, thresh = thresh, true_param = true_param)
