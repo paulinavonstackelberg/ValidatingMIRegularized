@@ -4,7 +4,7 @@ This folder contains all functions used in the simulation study. The functions a
 
 ## How to run this simulation study
 
-Use the project `Val_MIsim.Rproj`. The most important files are `sim_run_MAR_20.R`, `sim_run_MAR_10.R`, `sim_run_MCAR_20.R` and `sim_run_MCAR_10.R`. In these files, `sim.R` is called for each of the conditions. Therefore, you can run these scripts to generate and save the output for the study. *Note*: As imputation can become computationally intensive when nested in cross-validation, I parallelized parts of this simulation study using the package `parallel` (version 4.0.3) in R, using 7 cores on a personal computer. 
+Use the project `Val_MIsim.Rproj`. The most important files are `sim_run_MAR_20.R`, `sim_run_MAR_10.R`, `sim_run_MCAR_20.R` and `sim_run_MCAR_10.R`. In these files, `sim.R` is called for each of the conditions. Therefore, you can run these scripts to generate and save the output for the study. *Note*: As imputation can become computationally intensive when nested in cross-validation, I parallelized parts of this simulation study using the package `parallel` (version 4.0.3) in R, using 7 cores on a personal computer. Below the table describing the functions, you can find a brief example.
 
 
 
@@ -26,3 +26,52 @@ Use the project `Val_MIsim.Rproj`. The most important files are `sim_run_MAR_20.
 | sim_run_MAR_20.R      | calling sim.R                                                                                                                            | - file for all conditions with MAR missingness and 20 covariates                                                                                                                                                                                                                                                                                              |
 | sim_run_MCAR_10.R     | calling sim.R                                                                                                                            | - file for all conditions with MCAR missingness and 10 covariates                                                                                                                                                                                                                                                                                             |
 | sim_run_MCAR_20.R     | calling sim.R                                                                                                                            | - file for all conditions with MCAR missingness and 20 covariates                                                                                                                                         
+
+
+
+### Example
+
+Here you can find a brief example how to run the following condition: sample size *n*=200, 200 iterations, missingness proportion of 0.25 under a MAR (missing at random) mechanism, LASSO regression. 
+
+```R
+
+# load all your functions
+
+source("sim.R")
+source("miss_patt.R")
+source("data_sim.R")
+source("miss_patt.R")
+source("sample_ampute_sub.R")
+source("CV_folds.R")
+source("cond12_new.R")
+source("cond34_new.R")
+source("cond2_minusy.R")
+source("lasso_ridge_model.R")
+source("lasso_ridge_predict.R")
+source("Functions_eval.R")
+library(parallel)
+
+# preparing: initiate the parallelization
+
+cores_choose <- parallel::detectCores() -1 # this leaves one core free; in my simulation, this is set to 7.
+clust <- parallel::makeCluster(cores_choose)
+parallel::clusterExport(cl=clust, varlist=c("lasso_select_calc","extract_traintest","lasso_model" ,"ridge_model", "pred_test", "AUC_calc", "brier_calc", "calibration_calc", 
+                                            "R2_calc", "sens_spec_calc", "MSPE","replace_y"  ,"cond_12_new"), envir=environment())
+clusterEvalQ(clust, c(library(mice), library(pROC), library(glmnet)))
+
+# open the missingness pattern and the N=50000 dataset you want
+
+data_spec_1 <- readRDS("data_spec_1save")
+mis_pattern <- readRDS("mis_patt20")
+
+# set your seed and run the condition!
+
+set.seed(885)
+clusterSetRNGStream(cl =clust, iseed = 885)
+MAR_1_lasso <- sim(k_def = 3, data_spec = data_spec_1, nsub = 200, nsim = 200, n_param = 20, mis_prop = 0.25, mis_mech = "MAR", mis_pattern = mis_pattern, model = 1)
+
+# save the output
+
+saveRDS(MAR_1_lasso, "MAR_1_lasso")
+
+```
