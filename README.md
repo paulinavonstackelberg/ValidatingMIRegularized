@@ -54,9 +54,7 @@ The data from this study are stored in the archives belonging to Utrecht Univers
 
 For questions or suggestions, please contact the person responsible for this archive.
 
-**Name**: Paulina von Stackelberg 
 
-**Email**: paulina-von-stackelberg@web.de
 
 
 
