@@ -41,7 +41,7 @@ sim_dat <- function(n, r2, prevalence = 0.5, rel_weight, cormat) {
   X <- DataCpp::mvrnormArma(n, mu = rep(0, length(coefs)), sigma = cormat)
   Y <- rbinom(n, 1, 1 / (1 + exp(-(b0 + X %*% coefs))))
   
-  bind_cols(X = as.data.frame(X), Y = Y)
+  bind_cols(X = data.frame(X), Y = Y)
 }
 
 # Create the missingness pattern
@@ -53,4 +53,13 @@ miss_patt <- function(params, mis_vars = 7:3) {
   }) %>%
     t() %>%
     cbind(1, matrix(1, nrow = length(mis_vars), ncol = params - 10))
+}
+
+miss_pat2 <- function(n_pat) {
+  
+  pat <- list(0:1) %>%
+    rep(10) %>%
+    expand.grid()
+  
+  cbind(pat[sample(2:(nrow(pat) - 1), n_pat), ], 1)
 }
