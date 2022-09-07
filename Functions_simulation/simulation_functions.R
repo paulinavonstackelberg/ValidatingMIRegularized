@@ -63,3 +63,71 @@ miss_pat2 <- function(n_pat) {
   
   cbind(pat[sample(2:(nrow(pat) - 1), n_pat), ], 1)
 }
+
+## Function below is not finished yet, I am still thinking about how to do this
+## most efficiently (and how to structure the output in a general way, also 
+## dependent on what we decide with respect to the cross-validation)
+impute <- function(amputes, complete, cv_method, folds, m = 5, maxit = 15, imp_method) {
+  if (!cv_method %in% c("MIbefy", "MIbefminusy", "MICVsep", "MICVreuse")) {
+    stop("The specified method is incorrect, specify one of the following methods: 'MIbefy', 'MIbefminusy', 'MICVsep', 'MICVreuse'")
+  }
+  if (sum(is.na(amputes)) < 1) {
+    stop("The data does not contain missings, make sure that the data is incomplete.")
+  }
+  
+  fold_ind <- 1:max(folds)
+  names(fold_ind) <- paste0("fold", fold_ind)
+  
+  if (cv_method == "MIbefy") {
+    imp <- mice::mice(amputes, m = m, maxit = maxit, print = F) %>% 
+      complete("all")
+    
+    names(imp) <- paste0("imp", names(imp))
+    
+    out <- map(imp, function(i) {
+      map(fold_ind, function(fold) {
+        list(train = i[folds != fold, ],
+             test = i[folds == fold, ])
+      })
+    })
+  }
+  
+  if (cv_method == "MIbefminusy") {
+    out <- map(fold_ind, function(fold) {
+      amp <- amputes
+      amp$Y[folds == fold] <- NA
+      out <- mice::mice(amp, m = m, maxit = maxit, print = F) %>%
+        complete("all") %>%
+        map(function(imp) {
+          imp$Y[folds == fold] <- amputes$Y[folds == fold]
+          imp
+        })
+    })
+  }
+  
+  if (cv_method == "MICVsep") {
+    out <- map(1:nfolds, function(indices) {
+      train <- mice::mice(amp[folds != indices, ], m = m, maxit = maxit, print = F) #%>%
+      #complete("all")
+      test  <- mice::mice(amp[folds == indices, ], m = m, maxit = maxit, print = F) #%>%
+      #complete("all")
+      
+      list(train, test)
+      # imp <- mice::mice(amp, maxit = 0, m = m, print = F) %>% complete("all")
+      # 
+      # map(1:m, function(x) {
+      #   imp[[x]][folds != indices, ] <- train[[x]]
+      #   imp[[x]][folds == indices, ] <- test[[x]]
+      # })
+    })
+  }
+  
+  if (cv_method == "MICVreuse") {
+    out <- map(1:nfolds, function(indices) {
+      mice::mice(amp, m = m, maxit = maxit, print = F, ignore = folds == indices) %>%
+        complete("all")
+    })
+  }
+  
+  out
+}
